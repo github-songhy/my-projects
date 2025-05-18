@@ -1,0 +1,3 @@
+本来本机地址就是node1，或者localhost，或者127.0.0.1
+如果组件配置文件中配了相关地址node1，但是主机名是localhost，某些组件就会以localhost作为本机地址去建立相关连接
+与配置中的不一致，就会报Caused by: java.net.ConnectException: Connection refused

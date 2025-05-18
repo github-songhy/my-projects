@@ -1,0 +1,1 @@
+hive与iceberg集成要开启外置metastore，内置不行，且必须在hive-site文件设置hive.metastore.uris的绑定端口
