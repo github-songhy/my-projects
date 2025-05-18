@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <title>学业预警管理系统-登录</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="static/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <link href="static/css/login.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+<div id="loginApp" style="height:100%;background: whitesmoke;">
+    <div class="conTop" element-loading-text="拼命登录中" v-loading="fullscreenLoading">
+        <div class="conDivcon">
+            <div class="conDiv">
+                <div>
+                    <h1 style="color: #333333;">学业预警管理系统</h1>
+                </div>
+                <form class="form-box" style="margin-top:20px;">
+                    <div class="form-group">
+                        <input autofocus="autofocus" class="form-control ipt" id="account" placeholder="用户名" required=""
+                               type="text"/>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control ipt" id="password" placeholder="密码" required=""
+                               type="password"/>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control ipt" id="codeIpt" placeholder="验证码" required=""
+                               style="width: 80px;"
+                               type="text"/>
+                        <div @click="changeCode" id="code" title="看不清，换一张"></div>
+                    </div>
+                    <button @click="check" type="button">登 录</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+
+<script src="static/js/vue.js"></script>
+<script src="static/element-ui/lib/index.js"></script>
+<script src="static/js/jquery-2.2.3.min.js"></script>
+<script>
+    var code; //声明一个变量用于存储生成的验证码
+
+    function changeImg() {
+
+        var arrays = new Array(
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+
+            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+
+            'u', 'v', 'w', 'x', 'y', 'z',
+
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+
+            'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+
+            'U', 'V', 'W', 'X', 'Y', 'Z'
+        );
+
+        code = ''; //重新初始化验证码
+
+        //alert(arrays.length);
+
+        //随机从数组中获取四个元素组成验证码
+
+        for (var i = 0; i < 4; i++) {
+
+            //随机获取一个数组的下标
+
+            var r = parseInt(Math.random() * arrays.length);
+
+            code += arrays[r];
+
+        }
+
+        document.getElementById('code').innerHTML = code; //将验证码写入指定区域
+
+    }
+
+    window.onload = function () {
+        $("#account").focus();
+        document.getElementById("code").onclick = changeImg();
+        document.onkeydown = function (e) {
+            // 兼容FF和IE和Opera
+            var theEvent = e || window.event;
+            var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+            if (code == 13 && loginApp.$data.flag) {
+                //回车执行登录
+                loginApp.login();
+            } else if (code == 13) {
+                loginApp.$data.flag = true;
+            }
+        }
+    }
+
+
+    var basePath = "/" + window.location.pathname.split("/")[1];
+    var loginApp = new Vue({
+        el: "#loginApp",
+        data() {
+            return {
+                fullscreenLoading: false,
+                flag: true
+            }
+        },
+        mounted() {
+            changeImg();
+        },
+        methods: {
+            changeCode() {
+                changeImg();
+            },
+            check() {
+
+                this.login()
+                // var input_code = document.getElementById('codeIpt').value;
+                //
+                // if (input_code.toLowerCase() == code.toLowerCase()) {
+                //
+                //     this.login();
+                //
+                // } else {
+                //     this.$message.error('请输入正确的验证码！')
+                // }
+            },
+            login() {
+                console.log(this.fullscreenLoading);
+                var user = $("#account").val();
+                var password = $("#password").val();
+                if (user == '' || password == '') {
+                    return this.$message.error('请输入账号或密码！');
+                }
+                this.fullscreenLoading = true;
+                let that = this;
+                $.ajax({
+                    type: "get",
+                    url: basePath + "/loginPost",
+                    async: false,
+                    data: {"USERNAME": user, "PASSWORD": password},
+                    success: function (data) {
+                        //msg == 200 登录成功
+                        if (data.msg == '200') {
+                            that.fullscreenLoading = false;
+                            console.log(data.data)
+                            //将用户信息存入localStorage，即浏览器缓存
+                            var obj = JSON.stringify(data.data);
+                            localStorage.setItem('userInfo', obj);
+                            window.location.href = basePath + "/idx_index";
+                        } else {
+                            that.flag = false;
+                            that.fullscreenLoading = false;
+                            that.$alert('<strong style="color:red;">账号或密码错误，请重新输入</strong>', '警告', {
+                                dangerouslyUseHTMLString: true
+                            });
+                        }
+                    },
+                    error: function () {
+                        that.flag = false;
+                        that.fullscreenLoading = false;
+                        that.$confirm('登录错误，请重试?', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                        }).catch(() => {
+                        });
+                    }
+                });
+            },
+            goReg() {
+                window.location.href = basePath + "/idx_reg";
+            }
+        }
+    })
+
+
+</script>
+
+
+</html>

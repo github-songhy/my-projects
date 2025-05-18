@@ -1,0 +1,136 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+#indexApp {
+    /*height: 100%;*/
+    display: grid;
+    /*grid-template-rows: auto 1fr auto;*/
+    height: 100vh;
+}
+
+
+.my_icon1 {
+    background-image: url('../img/pie.png');
+    display: inline-block;
+    width: 20px; /* 设置图标宽度 */
+    height: 20px; /* 设置图标高度 */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.my_icon2 {
+    background-image: url('../img/menu.png');
+    display: inline-block;
+    width: 20px; /* 设置图标宽度 */
+    height: 20px; /* 设置图标高度 */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.conItem {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    height: calc(100% - 60px);
+}
+
+.conLeft {
+    width: 150px;
+    height: 100%;
+}
+
+.conRight {
+    height: 100%;
+    flex-grow: 1;
+    background-color: white;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: skyblue;
+    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background: #ededed;
+    border-radius: 10px;
+}
+
+.conTop {
+    height: 60px;
+    text-align: center;
+    color: #fff;
+    font-size: 18px;
+    line-height: 60px;
+    background-color: #024e8d;
+    border-bottom-style: ridge;
+    border-right-style: ridge;
+}
+
+.conTopRight {
+    padding: 0 20px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    background-color: #024e8d;
+    color: #fff;
+}
+
+.conRightNav {
+    font-size: 14px;
+    color: #333;
+    padding: 5px;
+}
+
+.conIframe {
+    margin: 0 15px;
+    height: calc(100% - 54px);
+
+}
+
+.loginout {
+    font-size: 12px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.conTopRight img {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.conRightBottom {
+    height: 50px;
+    background-color: #024e8d;
+    text-align: center;
+    color: #fff;
+    line-height: 50px;
+    font-size: 12px;
+}
+
+.conLeftUser {
+    height: 80px;
+    text-align: center;
+    background-color: #f29c2b;
+    color: #fff;
+    padding: 15px 0;
+}
+
+.conLeftUser img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    margin-bottom: 10px;
+}

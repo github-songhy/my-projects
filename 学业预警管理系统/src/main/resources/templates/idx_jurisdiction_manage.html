@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0"
+          name="viewport">
+    <title>权限管理</title>
+    <link href="favicon.ico" rel="shortcut icon">
+    <link href="../static/css/common.css" rel="stylesheet">
+    <link href="../static/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <script type="text/javascript">
+        var html = document.getElementsByTagName("html")[0];
+        var w = document.documentElement.clientWidth || document.body.clientWidth;
+        html.style.fontSize = w / 1366 + "px";
+    </script>
+    <script src="../static/js/vue.js"></script>
+    <script src="../static/element-ui/lib/index.js"></script>
+    <script src="../static/js/jquery-2.2.3.min.js"></script>
+    <!--富文本资源文件-->
+    <script charset="utf-8" src="../static/ueditor.config.js" type="text/javascript"></script>
+    <script charset="utf-8" src="../static/ueditor.all.min.js" type="text/javascript"></script>
+</head>
+<body style="background-color:#f1f7fe;">
+<div id="cus_IndexApp" v-cloak>
+    <div>
+        <el-button @click="add" icon="fa fa-user-plus" size="mini" type="success">&nbsp;新增</el-button>
+    </div>
+    <div class="cusMTable">
+        <el-table :data="cusTableLstInit" :header-cell-style="{background:'#004d8c',color:'#FFFFFF','line-height':'50px',height:'50px'}"
+                  style="width: 100%;">
+            <el-table-column
+                    label="角色"
+                    prop="role_manage_role_name1">
+            </el-table-column>
+            <el-table-column fixed="right" label="操作" width="200">
+                <template slot-scope="scope">
+                    <el-button @click="edit(scope.row)" size="small" type="primary">编辑</el-button>
+                    <el-button @click="del(scope.row)" size="small" type="danger">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div style="text-align:right;">
+            <el-pagination :current-page="pageInit.currentPage" :page-size="10" :total="pageInit.totalResult"
+                           @current-change="handleCurrentChange" layout="total, prev, pager, next, jumper">
+            </el-pagination>
+        </div>
+    </div>
+    <el-dialog :title="titleName" :visible.sync="addNewCustomer" top="5vh" width="60%">
+        <el-form :model="ruleForm" class="demo-ruleForm" label-width="100px" ref="ruleForm">
+            <el-form-item label="角色">
+                <el-select placeholder="请选择角色" v-model="ruleForm.role_manage_id">
+                    <el-option
+                            :key="item.id"
+                            :label="item.role_name"
+                            :value="item.id"
+                            v-for="item in classOptionsrole_manage_id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="菜单权限集合">
+                <el-tree :data="menuListapp_menu_tree"
+                         :default-checked-keys="initCheckListapp_menu_tree"
+                         :props="defaultPropsapp_menu_tree"
+                         node-key="id"
+                         ref="treeapp_menu_tree"
+                         show-checkbox>
+                </el-tree>
+            </el-form-item>
+            <el-form-item>
+                <el-button @click="submitForm" style="margin-left:35%" type="primary">立即保存</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+</div>
+</body>
+<script th:inline="javascript">
+    var ue = null;
+    var basePath = "/" + window.location.pathname.split("/")[1];
+    let app = window.parent.App;
+    new Vue({
+        el: "#cus_IndexApp",
+        data() {
+            return {
+                pageInit: {
+                    currentPage: 1,
+                },
+                cusTableLstInit: [],
+                soMoreUserIpt: {},
+                addNewCustomer: false,
+                ruleForm: {},
+                titleName: "新增",
+                classOptionsrole_manage_id: [],
+                menuListapp_menu_tree: [],
+                initCheckListapp_menu_tree: [],
+                defaultPropsapp_menu_tree: {label: 'name', value: 'id'},
+                classOptions: [],
+                userObj: [],
+                tenantList: [],
+                uploadUrl: basePath,
+            }
+        },
+        mounted() {
+            this.userObj = JSON.parse(localStorage.getItem("userInfo"));
+            ;
+            this.handleCurrentChange(1);
+        },
+        methods: {
+            windowOpen(url) {
+                window.open(url);
+            },
+            add() {
+                this.titleName = "新增";
+                this.ruleForm = {};
+                this.addNewCustomer = true;
+                this.getClassOptionsrole_manage_id();
+                this.getmenuListapp_menu_tree();
+                this.initCheckListapp_menu_tree();
+            },
+            edit(row) {
+                this.titleName = "编辑";
+                this.ruleForm = row;
+                this.addNewCustomer = true;
+                this.getClassOptionsrole_manage_id();
+                this.getmenuListapp_menu_tree();
+                this.initCheckListapp_menu_tree = row.app_menu_tree.split(',');
+            },
+            getClassOptionsrole_manage_id() {
+                let that = this;
+                $.ajax({
+                    type: "GET",
+                    url: `${basePath}/role_manage/queryRoleManageKey`,
+                    data: {},
+                    success: function (data) {
+                        that.classOptionsrole_manage_id = data.data;
+                    }
+                })
+            },
+            getmenuListapp_menu_tree() {
+                let that = this;
+                $.ajax({
+                    type: "GET",
+                    url: `${basePath}/app_menu/queryAppMenuKey`,
+                    data: {},
+                    success: function (data) {
+                        that.menuListapp_menu_tree = data.data;
+                    }
+                })
+            },
+            submitForm() {
+                let that = this;
+                let menu_listapp_menu_tree = this.$refs.treeapp_menu_tree.getCheckedKeys().toString();
+                this.ruleForm.app_menu_tree = menu_listapp_menu_tree;
+                if (this.titleName == "新增") {
+                    $.ajax({
+                        type: "GET",
+                        url: basePath + "/jurisdiction_manage/addJurisdictionManageNo",
+                        data: that.ruleForm,
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status == 0) {
+                                that.addNewCustomer = false;
+                                that.handleCurrentChange(1);
+                            }
+                        }
+                    })
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: basePath + "/jurisdiction_manage/updateJurisdictionManage",
+                        data: that.ruleForm,
+                        success: function (res) {
+                            if (res.status == 0) {
+                                that.addNewCustomer = false;
+                                that.handleCurrentChange(1);
+                            }
+                        }
+                    })
+                }
+            },
+            changeSearchFlag() {
+                this.topSearchFlag = false;
+            },
+            handleCurrentChange(val) {
+                this.loading = true;
+                this.soMoreUserIpt.currentPage = val;
+                let that = this;
+                $.ajax({
+                    type: "GET",
+                    url: `${basePath}/jurisdiction_manage/queryPageJurisdictionManageKeyList`,
+                    data: that.soMoreUserIpt,
+                    success: function (data) {
+                        that.cusTableLstInit = data.rows;
+                        that.pageInit.totalResult = data.total;
+                        that.pageInit.currentPage = val;
+                        that.loading = false;
+                    }
+                })
+            },
+            del(row) {
+                var that = this;
+                that.$confirm("确认删除该信息!", "提示", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning"
+                }).then(() => {
+                    $.ajax({
+                        type: "GET",
+                        url: `${basePath}/jurisdiction_manage/deleteJurisdictionManage`,
+                        data: {id: row.id},
+                        success: function (data) {
+                            if (data.status == 0) {
+                                that.$message({
+                                    type: "success",
+                                    message: "删除成功"
+                                });
+                                that.handleCurrentChange(1);
+                            }
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: "info",
+                        message: "已取消删除"
+                    });
+                });
+            },
+        }
+    })
+</script>
+</html>
+
+

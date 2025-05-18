@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.CourseManageMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+su.name name,
+su.credit credit,
+su.grade_point grade_point,
+su.content content,
+su.create_time create_time,
+  su.course_code course_code,
+   su.planned_term planned_term,
+   su.commencement_term commencement_term,
+   su.course_type course_type
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addCourseManage" parameterType="pd">
+        insert into course_manage (name,
+                                   credit,
+                                   grade_point,
+                                   content,
+                                   create_time,
+                                   course_code,
+                                   planned_term,
+                                   commencement_term,
+                                   course_type)
+        values (#{name},
+                #{credit},
+                #{grade_point},
+                #{content},
+                now(),
+                #{course_code},
+                #{commencement_term},
+                #{planned_term},
+                #{course_type}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteCourseManageId" parameterType="pd">
+        DELETE
+        FROM course_manage
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateCourseManage" parameterType="pd">
+        UPDATE course_manage
+        <set>
+            <if test="name != null and name !=''">name = #{name},</if>
+            <if test="credit != null and credit !=''">credit = #{credit},</if>
+            <if test="grade_point != null and grade_point !=''">grade_point = #{grade_point},</if>
+            <if test="content != null and content !=''">content = #{content},</if>
+            <if test="course_code != null and course_code !=''">course_code = #{course_code},</if>
+            <if test="planned_term != null and planned_term !=''">planned_term = #{planned_term},</if>
+            <if test="commencement_term != null and commencement_term !=''">commencement_term = #{commencement_term},
+            </if>
+            <if test="course_type != null and course_type !=''">course_type = #{course_type},</if>
+
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="queryCourseManageKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        FROM course_manage su
+        <!--向左关联查询-->
+        where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="name != null and name != '' ">and su.name = #{name}</if>
+        <if test="credit != null and credit != '' ">and su.credit = #{credit}</if>
+        <if test="grade_point != null and grade_point != '' ">and su.grade_point = #{grade_point}</if>
+        <if test="content != null and content != '' ">and su.content = #{content}</if>
+        <if test="create_time != null and create_time != '' ">and su.create_time = #{create_time}</if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageCourseManageKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        FROM course_manage su
+        <!--向左关联查询-->
+        where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.name != null and pd.name !=''">and su.name = #{pd.name}</if>
+        <if test="pd.credit != null and pd.credit !=''">and su.credit = #{pd.credit}</if>
+        <if test="pd.grade_point != null and pd.grade_point !=''">and su.grade_point = #{pd.grade_point}</if>
+        <if test="pd.content != null and pd.content !=''">and su.content = #{pd.content}</if>
+        <if test="pd.create_time != null and pd.create_time !=''">and su.create_time = #{pd.create_time}</if>
+    </select>
+</mapper>

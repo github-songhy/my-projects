@@ -1,0 +1,51 @@
+jdbc:
+  driverClassName: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql://127.0.0.1:3306/rpayj?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+  username: root
+  password: 123456
+mybatis:
+  mapper-beans: com.earlywarning.mapper
+  mapper-locations: classpath*:com/earlywarning/mysql/**/*Mapper.xml
+  type-aliases-package: com.earlywarning.entity
+  log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+server:
+  context-path: /app
+  port: 85
+
+
+spring:
+  resources:
+    #    static-locations: classpath:/templates/,classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:${img.upload.url}
+    static-locations: classpath:/templates/,classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,file:///${user.dir}/upload-file
+  thymeleaf:
+    mode: LEGACYHTML5
+  http:
+    multipart:
+      maxFileSize: 100Mb
+      maxRequestSize: 100Mb
+  mvc:
+    static-path-pattern: /**
+config:
+  url:
+    static_files_access_url: /app/
+    website_host: http://127.0.0.1
+
+
+## thymeleaf模板设置
+thymeleaf:
+  prefix: classpath:/templates
+  suffix: .html
+  mode: HTML
+  encoding: utf-8
+  servlet.content-type: text/html
+  cache: false
+
+## 文件上传配置
+img:
+  upload:
+    url: C:/upload/
+# 自定义的文件保存地址
+file:
+  save:
+    location: ${user.dir}/upload-file
+

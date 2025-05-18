@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.AppMenuCopyMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+su.name name,
+su.menu_details menu_details
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addAppMenuCopy" parameterType="pd">
+        insert into app_menu_copy (name,
+                                   menu_details)
+        values (#{name},
+                #{menu_details}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteAppMenuCopyId" parameterType="pd">
+        DELETE
+        FROM app_menu_copy
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateAppMenuCopy" parameterType="pd">
+        UPDATE app_menu_copy
+        <set>
+
+            <if test="name != null and name !=''">name = #{name},</if>
+            <if test="menu_details != null and menu_details !=''">menu_details = #{menu_details},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="queryAppMenuCopyKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM app_menu_copy su where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="name != null and name != '' ">and su.name = #{name}</if>
+        <if test="menu_details != null and menu_details != '' ">and su.menu_details = #{menu_details}</if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageAppMenuCopyKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM app_menu_copy su where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.name != null and pd.name !=''">and su.name = #{pd.name}</if>
+        <if test="pd.menu_details != null and pd.menu_details !=''">and su.menu_details = #{pd.menu_details}</if>
+    </select>
+</mapper>

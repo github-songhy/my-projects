@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.SysUserMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+su.USERNAME USERNAME,
+su.PASSWORD PASSWORD,
+su.NAME NAME,
+su.jurisdiction_manage_id jurisdiction_manage_id,
+su.create_time create_time,
+su.update_time update_time,
+su.signature signature,
+su.sex sex,
+su.phone phone
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addSysUser" parameterType="pd">
+        insert into sys_user (USERNAME,
+                              PASSWORD,
+                              NAME,
+                              jurisdiction_manage_id,
+                              create_time,
+                              update_time,
+                              signature,
+                              sex,
+                              phone)
+        values (#{USERNAME},
+                #{PASSWORD},
+                #{NAME},
+                #{jurisdiction_manage_id},
+                now(),
+                #{update_time},
+                #{signature},
+                #{sex},
+                #{phone}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteSysUserId" parameterType="pd">
+        DELETE
+        FROM sys_user
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateSysUser" parameterType="pd">
+        UPDATE sys_user
+        <set>
+
+            <if test="USERNAME != null and USERNAME !=''">USERNAME = #{USERNAME},</if>
+            <if test="PASSWORD != null and PASSWORD !=''">PASSWORD = #{PASSWORD},</if>
+            <if test="NAME != null and NAME !=''">NAME = #{NAME},</if>
+            <if test="jurisdiction_manage_id != null and jurisdiction_manage_id !=''">jurisdiction_manage_id =
+                #{jurisdiction_manage_id},
+            </if>
+
+            update_time = now(),
+            <if test="signature != null and signature !=''">signature = #{signature},</if>
+            <if test="sex != null and sex !=''">sex = #{sex},</if>
+            <if test="phone != null and phone !=''">phone = #{phone},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="querySysUserKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        ,jurisdiction_manage.id as jurisdiction_manage_id1
+        ,jurisdiction_manage.role_manage_id as jurisdiction_manage_role_manage_id1
+        ,jurisdiction_manage.app_menu_tree as jurisdiction_manage_app_menu_tree1
+        ,role_manage.role_name as role_name
+        FROM sys_user su
+        <!--向左关联查询-->
+        left join jurisdiction_manage jurisdiction_manage on jurisdiction_manage.id=su.jurisdiction_manage_id
+        left join role_manage role_manage on role_manage.id=jurisdiction_manage.role_manage_id
+        where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="USERNAME != null and USERNAME != '' ">and su.USERNAME = #{USERNAME}</if>
+        <if test="PASSWORD != null and PASSWORD != '' ">and su.PASSWORD = #{PASSWORD}</if>
+        <if test="NAME != null and NAME != '' ">and su.NAME = #{NAME}</if>
+        <if test="jurisdiction_manage_id != null and jurisdiction_manage_id != '' ">and su.jurisdiction_manage_id =
+            #{jurisdiction_manage_id}
+        </if>
+        <if test="create_time != null and create_time != '' ">and su.create_time = #{create_time}</if>
+        <if test="update_time != null and update_time != '' ">and su.update_time = #{update_time}</if>
+        <if test="signature != null and signature != '' ">and su.signature = #{signature}</if>
+        <if test="sex != null and sex != '' ">and su.sex = #{sex}</if>
+        <if test="phone != null and phone != '' ">and su.phone = #{phone}</if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageSysUserKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        ,jurisdiction_manage.id as jurisdiction_manage_id1
+        ,jurisdiction_manage.role_manage_id as jurisdiction_manage_role_manage_id1
+        ,jurisdiction_manage.app_menu_tree as jurisdiction_manage_app_menu_tree1
+        ,role_manage.role_name as role_name
+        FROM sys_user su
+        <!--向左关联查询-->
+        left join jurisdiction_manage jurisdiction_manage on jurisdiction_manage.id=su.jurisdiction_manage_id
+        left join role_manage role_manage on role_manage.id=jurisdiction_manage.role_manage_id
+        where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.USERNAME != null and pd.USERNAME !=''">and su.USERNAME = #{pd.USERNAME}</if>
+        <if test="pd.PASSWORD != null and pd.PASSWORD !=''">and su.PASSWORD = #{pd.PASSWORD}</if>
+        <if test="pd.NAME != null and pd.NAME !=''">and su.NAME = #{pd.NAME}</if>
+        <if test="pd.jurisdiction_manage_id != null and pd.jurisdiction_manage_id !=''">and su.jurisdiction_manage_id =
+            #{pd.jurisdiction_manage_id}
+        </if>
+        <if test="pd.create_time != null and pd.create_time !=''">and su.create_time = #{pd.create_time}</if>
+        <if test="pd.update_time != null and pd.update_time !=''">and su.update_time = #{pd.update_time}</if>
+        <if test="pd.signature != null and pd.signature !=''">and su.signature = #{pd.signature}</if>
+        <if test="pd.sex != null and pd.sex !=''">and su.sex = #{pd.sex}</if>
+        <if test="pd.phone != null and pd.phone !=''">and su.phone = #{pd.phone}</if>
+    </select>
+</mapper>

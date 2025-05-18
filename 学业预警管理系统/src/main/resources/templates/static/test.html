@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>后台管理-学业预警管理系统</title>
+    <link href="static/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <link href="/app/static/css/idx_index.css" rel="stylesheet">
+</head>
+<body>
+<div id="indexApp">
+    <div class="conTop">功 能 区</div>
+    <el-menu :default-active="activeIndex" @select="handleSelect" class="el-menu-vertical-demo">
+
+    </el-menu>
+</div>
+</body>
+<script src="static/js/vue.js"></script>
+<script>
+
+    var basePath = "/" + window.location.pathname.split("/")[1];
+    var indexApp = new Vue({
+        el: "#indexApp",
+        data() {
+            return {
+                activeIndex: "9999"
+            }
+        },
+        method: {
+            // 处理菜单点击事件
+            // 这里的key是菜单的index，keyPath是一个数组，包含了所有父级菜单的index
+            //hadndSelect函数是el-menu组件的select事件的回调函数，是否可以随意命名，答案是
+            handleSelect(key, keyPath) {
+                console(key, keyPath)
+            }
+        }
+    });
+</script>
+</html>

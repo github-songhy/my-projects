@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>后台管理-学业预警管理系统</title>
+    <link href="static/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <link href="/app/static/css/idx_index.css" rel="stylesheet">
+</head>
+<body>
+<div id="indexApp">
+    <div class="conItem">
+        <div class="conLeft">
+            <div class="conTop">功 能 区</div>
+            <el-menu :default-active="activeIndex" @select="handleSelect" active-text-color="#ffd04b"
+                     background-color="#024e8d" class="el-menu-vertical-demo" style="height: 100%;"
+                     text-color="#fff">
+                <el-menu-item @click="toRouter('wel_index')" index="9999">
+                    <i class="my_icon1"></i>
+                    <span slot="title">预警总览</span>
+                </el-menu-item>
+                <!--                 循环菜单-->
+                <!--                菜单数据渲染到左侧菜单栏-->
+                <el-menu-item :index="item.id.toString()" @click="toRouter('/app/'+item.href)"
+                              v-for="(item,index) in menuList">
+                    <i class="my_icon2"></i>
+                    <span slot="title">{{item.name}}</span>
+
+                </el-menu-item>
+            </el-menu>
+        </div>
+        <div class="conRight">
+            <div class="conTopRight">
+                <div style="flex-grow: 1;"></div>
+                <div class="loginout">欢迎您：{{userObj.NAME}}</div>
+                <i @click="loginOut();" class="el-icon-switch-button"></i>
+            </div>
+            <!--        如果activeIndex被改变了，不是9999，那么就说明选择了其他菜单栏，不渲染这个div，渲染对应功能的div-->
+            <!--        即下面的<iframe>  -->
+            <div class="conIframe" v-if="activeIndex==9999">
+                <h1 style="text-align:center;">学业预警统计总览</h1>
+                <el-row :gutter="20" type="flex">
+                    <el-col :span="12">
+                        学年
+                        <el-select placeholder="请选择学年" v-model="ruleForm.session_manage_id">
+                            <el-option
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id"
+                                    v-for="item in classOptionssession_manage_id">
+                            </el-option>
+                        </el-select>
+
+
+                        <el-button @click="search()" size="15px" style="background-color:#47a8f5;" type="warning">搜索
+                        </el-button>
+
+                        <!-- 为 ECharts 准备一个定义了宽高的 DOM -->
+                        <div id="main1" style="width: 1200px;height:400px;margin-top: 80px;"></div>
+
+                    </el-col>
+                    <!--                    <el-col :span="12">-->
+
+                    <!--                        <div id="main2" style="width: 600px;height:400px;margin-top: 100px;"></div>-->
+
+                    <!--                    </el-col>-->
+                </el-row>
+
+
+            </div>
+            <iframe :id="acticeIframeUrl" :src="acticeIframeUrl" class="conIframe" frameborder="0" min-width="100%" scrolling="auto"
+                    v-else width="98%"></iframe>
+
+            <div class="conRightBottom">学生学业预警管理系统</div>
+        </div>
+    </div>
+</div>
+</body>
+<!-- 全局js -->
+<script src="static/echarts.min.js"></script>
+<script src="static/js/vue.js"></script>
+<script src="static/element-ui/lib/index.js"></script>
+<script src="static/js/jquery-2.2.3.min.js"></script>
+<script>
+
+    var basePath = "/" + window.location.pathname.split("/")[1];
+    var indexApp = new Vue({
+        el: "#indexApp",
+        data() {
+            return {
+                activeIndex: "9999",
+                acticeIframeUrl: "",
+                userObj: {},
+                isFullScreenFlag: false,
+                noticeList: [],
+                menuList: [],
+                classOptionssession_manage_id: [],
+                ruleForm: {
+                    session_manage_id: ''
+                },
+            }
+        },
+        created() {
+            this.userObj = JSON.parse(localStorage.getItem("userInfo"));
+            this.getRoleQx(this.userObj.jurisdiction_manage_id);
+        },
+        mounted() {
+            this.getClassOptionssession_manage_id()
+            this.search()
+
+        },
+        methods: {
+            // 查询违纪人数占比
+            /*
+            queryViolationPie(){
+                console.log('去搜索')
+                let that = this;
+                $.ajax({
+                    type: "GET",
+                    url: `${basePath}/violation_type/queryViolationPie`,
+                    data: {},
+                    success: function (data) {
+                        var resdata = data.data
+                        console.log(typeof  resdata)
+                        // 基于准备好的dom，初始化echarts实例
+                        var myChart = echarts.init(document.getElementById('main2'));
+
+
+                        var option = {
+                            title: {
+                                text: '违规人数占比',
+                                subtext: '',
+                                left: 'center'
+                            },
+                            tooltip: {
+                                trigger: 'item'
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left'
+                            },
+                            color: ['#fc8251', '#ef6567'],
+                            series: [
+                                {
+                                    name: '违规人数占比',
+                                    type: 'pie',
+                                    radius : '55%',
+                                    center: ['50%', '60%'],
+                                    label: {
+                                        normal: {
+                                            show: true,
+                                            formatter: '{b}: {c}({d}%)' //自定义显示格式(b:name, c:value, d:百分比)
+                                        }
+                                    },
+                                    data: resdata                //datas在其他地方已赋值
+                                }
+                            ]
+                        };
+
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);
+                    }
+                })
+            },
+            */
+            // 查询学业预警人数占比
+            search() {
+                console.log('去搜索')
+                let that = this;
+                $.ajax({
+                    type: "GET",
+                    url: `${basePath}/result_manage/queryResultManageBySessionManageId`,
+                    data: {session_manage_id: that.ruleForm.session_manage_id},
+                    success: function (data) {
+                        var resdata = data.data
+                        console.log(typeof resdata)
+                        console.log(resdata)
+                        // 基于准备好的dom，初始化echarts实例
+                        var myChart = echarts.init(document.getElementById('main1'));
+
+
+                        var option = {
+                            title: {
+                                text: '学业预警人数占比',
+                                subtext: '',
+                                left: 'center'
+                            },
+                            tooltip: {
+                                trigger: 'item'
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left'
+                            },
+                            color: ['#64f335', '#efdc79', '#ea7b28', '#d50d0d'],
+                            series: [
+                                {
+                                    name: '学业预警人数占比',
+                                    type: 'pie',
+                                    radius: '55%',
+                                    center: ['50%', '60%'],
+                                    label: {
+                                        normal: {
+                                            show: true,
+                                            formatter: '{b}: {c}({d}%)' //自定义显示格式(b:name, c:value, d:百分比)
+                                        }
+                                    },
+                                    data: resdata                //datas在其他地方已赋值
+                                }
+                            ]
+                        };
+
+                        // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);
+                    }
+                })
+            },
+            // 查询学年
+            getClassOptionssession_manage_id() {
+                let that = this;
+                $.ajax({
+                    type: "GET",
+                    url: `${basePath}/session_manage/querySessionManageKey`,
+                    data: {},
+                    success: function (data) {
+                        that.classOptionssession_manage_id = data.data;
+                    }
+                })
+            },
+            // 查询权限
+            getRoleQx(id) {
+                let that = this;
+                $.ajax({
+                    type: "GET",
+                    url: `${basePath}/jurisdiction_manage/queryJurisdictionManageKey`,
+                    data: {id},
+                    success: function (res) {
+                        let menuLts = res.data[0].app_menu_tree.split(',');
+                        console.log(menuLts);
+                        for (var item of menuLts) {
+                            that.getMenuList(item)
+                        }
+                    }
+                })
+            },
+            // 查询可访问的菜单栏
+            getMenuList(id) {
+                let that = this;
+                $.ajax({
+                    type: "GET",
+                    url: `${basePath}/app_menu/queryAppMenuKey`,
+                    data: {id},
+                    success: function (data) {
+                        //push
+                        that.menuList.push(data.data[0]);
+                    }
+                })
+            },
+            // 处理菜单点击事件
+            // 这里的key是菜单的index，keyPath是一个数组，包含了所有父级菜单的index
+            // 选择某个功能就改变activeIndex的值
+            handleSelect(key, keyPath) {
+                console.log(key);
+                this.activeIndex = key;
+            },
+            // 退出登录
+            loginOut() {
+                var that = this;
+                $.ajax({
+                    type: "GET",
+                    url: `${basePath}/logout`,
+                    data: {},
+                    success: function (data) {
+                        window.location.href = basePath + "/idx_login";
+                        localStorage.removeItem("userInfo")
+                    }
+                })
+            },
+            // 不同浏览器全屏方法展示
+            fullScreen() {
+                this.isFullScreenFlag = true;
+                var docElm = document.documentElement;
+                //W3C
+                if (docElm.requestFullscreen) {
+                    docElm.requestFullscreen();
+                }
+                //FireFox
+                else if (docElm.mozRequestFullScreen) {
+                    docElm.mozRequestFullScreen();
+                }
+                //Chrome等
+                else if (docElm.webkitRequestFullScreen) {
+                    docElm.webkitRequestFullScreen();
+                }
+                //IE11
+                else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
+            },
+            // 退出全屏
+            miniScreen() {
+                this.isFullScreenFlag = false;
+                var el = document;
+                var cfs = el.cancelFullScreen || el.webkitCancelFullScreen || el.mozCancelFullScreen || el.exitFullScreen;
+                if (typeof cfs != "undefined" && cfs) {
+                    cfs.call(el);
+                } else if (typeof window.ActiveXObject != "undefined") {
+                    //模拟按下F11键退出全屏
+                    var wscript = new ActiveXObject("WScript.Shell");
+                    if (wscript != null) {
+                        wscript.SendKeys("{F11}");
+                    }
+                }
+            },
+            // 跳转到对应的功能在右侧<iframe>中展示
+            toRouter(src, name) {
+                this.curSet = name;
+                if (src == 'wel_index') {
+                } else {
+                    this.acticeIframeUrl = src;
+                }
+            }
+        }
+    })
+</script>
+</html>

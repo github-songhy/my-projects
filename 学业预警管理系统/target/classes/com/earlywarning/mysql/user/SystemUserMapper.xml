@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.user.SystemUserMapper">
+    <!--系统用户-->
+
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        ,
+        su.USERNAME, 
+        su.PASSWORD, 
+        su.NAME, 
+        su.jurisdiction_manage_id,
+        su.create_time, 
+        su.update_time, 
+        su.signature
+    </sql>
+
+    <sql id="Base_Column_List_1">
+        su
+        .
+        id
+        su_id,
+        su.USERNAME su_USERNAME, 
+        su.PASSWORD su_PASSWORD, 
+        su.NAME su_NAME, 
+        su.jurisdiction_manage_id su_jurisdiction_manage_id,
+        su.create_time su_create_time, 
+        su.update_time su_update_time, 
+        su.signature su_signature
+    </sql>
+
+    <select id="getSystemUserByColumn" parameterType="pd" resultType="pd">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user su
+        where 1 = 1
+        <if test="id != null">
+            and su.id = #{id}
+        </if>
+        <if test="USERNAME != null">
+            and su.USERNAME = #{USERNAME}
+        </if>
+        <if test="PASSWORD != null">
+            and su.PASSWORD = #{PASSWORD}
+        </if>
+        <if test="NAME != null">
+            and su.NAME = #{NAME}
+        </if>
+        <if test="jurisdiction_manage_id != null">
+            and su.jurisdiction_manage_id = #{jurisdiction_manage_id}
+        </if>
+        <if test="create_time != null">
+            and su.create_time = #{create_time}
+        </if>
+        <if test="update_time != null">
+            and su.update_time = #{update_time}
+        </if>
+        <if test="signature != null">
+            and su.signature = #{signature}
+        </if>
+    </select>
+
+    <delete id="deleteSystemUserByColumn" parameterType="pd">
+        delete from sys_user
+        where 1 = 1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="USERNAME != null and USERNAME != ''">
+            and USERNAME = #{USERNAME}
+        </if>
+        <if test="PASSWORD != null and PASSWORD != ''">
+            and PASSWORD = #{PASSWORD}
+        </if>
+        <if test="NAME != null and NAME != ''">
+            and NAME = #{NAME}
+        </if>
+        <if test="jurisdiction_manage_id != null and jurisdiction_manage_id != ''">
+            and jurisdiction_manage_id = #{jurisdiction_manage_id}
+        </if>
+        <if test="create_time != null and create_time != ''">
+            and create_time = #{create_time}
+        </if>
+        <if test="update_time != null and update_time != ''">
+            and update_time = #{update_time}
+        </if>
+        <if test="signature != null and signature != ''">
+            and signature = #{signature}
+        </if>
+    </delete>
+
+    <insert id="addSystemUser" parameterType="pd">
+        insert into sys_user (USERNAME,
+                              PASSWORD,
+                              NAME,
+                              jurisdiction_manage_id,
+                              create_time,
+                              update_time,
+                              signature)
+        values (#{USERNAME},
+                #{PASSWORD},
+                #{NAME},
+                #{jurisdiction_manage_id},
+                now(),
+                #{update_time},
+                #{signature})
+    </insert>
+
+    <insert id="addSystemUserSelective" parameterType="pd">
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                id,
+            </if>
+            <if test="USERNAME != null and USERNAME != ''">
+                USERNAME,
+            </if>
+            <if test="PASSWORD != null and PASSWORD != ''">
+                PASSWORD,
+            </if>
+            <if test="NAME != null and NAME != ''">
+                NAME,
+            </if>
+            <if test="jurisdiction_manage_id != null and jurisdiction_manage_id != ''">
+                jurisdiction_manage_id,
+            </if>
+            <if test="create_time != null and create_time != ''">
+                create_time,
+            </if>
+            <if test="update_time != null and update_time != ''">
+                update_time,
+            </if>
+            <if test="signature != null and signature != ''">
+                signature,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test=" id != null and id != ''">
+                #{id},
+            </if>
+            <if test=" USERNAME != null and USERNAME != ''">
+                #{USERNAME},
+            </if>
+            <if test=" PASSWORD != null and PASSWORD != ''">
+                #{PASSWORD},
+            </if>
+            <if test=" NAME != null and NAME != ''">
+                #{NAME},
+            </if>
+            <if test=" jurisdiction_manage_id != null and jurisdiction_manage_id != ''">
+                #{jurisdiction_manage_id},
+            </if>
+            <if test=" create_time != null and create_time != ''">
+                #{create_time},
+            </if>
+            <if test=" update_time != null and update_time != ''">
+                #{update_time},
+            </if>
+            <if test=" signature != null and signature != ''">
+                #{signature},
+            </if>
+        </trim>
+    </insert>
+
+    <!--循环批量插入-->
+    <insert id="addSystemUserBatch" parameterType="pd">
+        insert into sys_user (
+        id,
+        USERNAME,
+        PASSWORD,
+        NAME,
+        jurisdiction_manage_id,
+        create_time,
+        update_time,
+        signature
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            (select REPLACE(uuid(), '-', '')),
+            #{item.USERNAME},
+            #{item.PASSWORD},
+            #{item.NAME},
+            #{item.jurisdiction_manage_id},
+            #{item.create_time},
+            #{item.update_time},
+            #{item.signature}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateSystemUserByid" parameterType="pd">
+        update sys_user
+        <set>
+            <if test="USERNAME != null and USERNAME != '' ">
+                USERNAME = #{USERNAME},
+            </if>
+            <if test="PASSWORD != null and PASSWORD != '' ">
+                PASSWORD = #{PASSWORD},
+            </if>
+            <if test="NAME != null and NAME != '' ">
+                NAME = #{NAME},
+            </if>
+            <if test="jurisdiction_manage_id != null and jurisdiction_manage_id != '' ">
+                jurisdiction_manage_id = #{jurisdiction_manage_id},
+            </if>
+            <if test="create_time != null and create_time != '' ">
+                create_time = #{create_time},
+            </if>
+            <if test="update_time != null and update_time != '' ">
+                update_time = #{update_time},
+            </if>
+            <if test="signature != null and signature != '' ">
+                signature = #{signature},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateSystemUserByColumn" parameterType="pd">
+        update sys_user
+        <set>
+            <if test="USERNAME != null and USERNAME != '' ">
+                USERNAME = #{USERNAME},
+            </if>
+            <if test="PASSWORD != null and PASSWORD != '' ">
+                PASSWORD = #{PASSWORD},
+            </if>
+            <if test="NAME != null and NAME != '' ">
+                NAME = #{NAME},
+            </if>
+            <if test="jurisdiction_manage_id != null and jurisdiction_manage_id != '' ">
+                jurisdiction_manage_id = #{jurisdiction_manage_id},
+            </if>
+            <if test="create_time != null and create_time != '' ">
+                create_time = #{create_time},
+            </if>
+            <if test="update_time != null and update_time != '' ">
+                update_time = #{update_time},
+            </if>
+            <if test="signature != null and signature != '' ">
+                signature = #{signature},
+            </if>
+        </set>
+        where 1 = 1
+        <if test="id_Q != null and id_Q != '' ">
+            and id = #{id_Q}
+        </if>
+        <if test="USERNAME_Q != null and USERNAME_Q != '' ">
+            and USERNAME = #{USERNAME_Q}
+        </if>
+        <if test="PASSWORD_Q != null and PASSWORD_Q != '' ">
+            and PASSWORD = #{PASSWORD_Q}
+        </if>
+        <if test="NAME_Q != null and NAME_Q != '' ">
+            and NAME = #{NAME_Q}
+        </if>
+        <if test="jurisdiction_manage_id_Q != null and jurisdiction_manage_id_Q != '' ">
+            and jurisdiction_manage_id = #{jurisdiction_manage_id_Q}
+        </if>
+        <if test="create_time_Q != null and create_time_Q != '' ">
+            and create_time = #{create_time_Q}
+        </if>
+        <if test="update_time_Q != null and update_time_Q != '' ">
+            and update_time = #{update_time_Q}
+        </if>
+        <if test="signature_Q != null and signature_Q != '' ">
+            and signature = #{signature_Q}
+        </if>
+    </update>
+
+    <select id="queryPageSystemUserList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user su
+        where 1 = 1
+        <if test="pd.id != null and pd.id != ''">
+            and su.id = #{pd.id}
+        </if>
+        <if test="pd.USERNAME != null and pd.USERNAME != ''">
+            and su.USERNAME = #{pd.USERNAME}
+        </if>
+        <if test="pd.PASSWORD != null and pd.PASSWORD != ''">
+            and su.PASSWORD = #{pd.PASSWORD}
+        </if>
+        <if test="pd.NAME != null and pd.NAME != ''">
+            and su.NAME = #{pd.NAME}
+        </if>
+        <if test="pd.jurisdiction_manage_id != null and pd.jurisdiction_manage_id != ''">
+            and su.jurisdiction_manage_id = #{pd.jurisdiction_manage_id}
+        </if>
+        <if test="pd.create_time != null and pd.create_time != ''">
+            and su.create_time = #{pd.create_time}
+        </if>
+        <if test="pd.update_time != null and pd.update_time != ''">
+            and su.update_time = #{pd.update_time}
+        </if>
+        <if test="pd.signature != null and pd.signature != ''">
+            and su.signature = #{pd.signature}
+        </if>
+    </select>
+
+    <select id="getSystemUserList" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user su
+        where 1 = 1
+        <if test="id != null and id != ''">
+            and su.id = #{id}
+        </if>
+        <if test="USERNAME != null and USERNAME != ''">
+            and su.USERNAME = #{USERNAME}
+        </if>
+        <if test="PASSWORD != null and PASSWORD != ''">
+            and su.PASSWORD = #{PASSWORD}
+        </if>
+        <if test="NAME != null and NAME != ''">
+            and su.NAME = #{NAME}
+        </if>
+        <if test="jurisdiction_manage_id != null and jurisdiction_manage_id != ''">
+            and su.jurisdiction_manage_id = #{jurisdiction_manage_id}
+        </if>
+        <if test="create_time != null and create_time != ''">
+            and su.create_time = #{create_time}
+        </if>
+        <if test="update_time != null and update_time != ''">
+            and su.update_time = #{update_time}
+        </if>
+        <if test="signature != null and signature != ''">
+            and su.signature = #{signature}
+        </if>
+    </select>
+
+    <!--<update id="updateSystemUserBatch" parameterType="pd" >
+		<foreach close=";" collection="list" index="index" item="item" open="" separator=";">
+			update sys_user
+			<trim prefix="set" suffixOverrides=",">
+				<if test="item.USERNAME != null and item.USERNAME != '' " >
+					USERNAME = #{item.USERNAME}, 
+				</if>
+				<if test="item.PASSWORD != null and item.PASSWORD != '' " >
+					PASSWORD = #{item.PASSWORD}, 
+				</if>
+				<if test="item.NAME != null and item.NAME != '' " >
+					NAME = #{item.NAME}, 
+				</if>
+				<if test="item.jurisdiction_manage_id != null and item.jurisdiction_manage_id != '' " >
+					jurisdiction_manage_id = #{item.jurisdiction_manage_id},
+				</if>
+				<if test="item.create_time != null and item.create_time != '' " >
+					create_time = #{item.create_time}, 
+				</if>
+				<if test="item.update_time != null and item.update_time != '' " >
+					update_time = #{item.update_time}, 
+				</if>
+				<if test="item.signature != null and item.signature != '' " >
+					signature = #{item.signature}, 
+				</if>
+			</trim>
+			where 1 = 1 
+			<if test="item.id_Q != null and item.id_Q != '' " >
+				and id = #{item.id_Q} 
+			</if>
+			<if test="item.USERNAME_Q != null and item.USERNAME_Q != '' " >
+				and USERNAME = #{item.USERNAME_Q} 
+			</if>
+			<if test="item.PASSWORD_Q != null and item.PASSWORD_Q != '' " >
+				and PASSWORD = #{item.PASSWORD_Q} 
+			</if>
+			<if test="item.NAME_Q != null and item.NAME_Q != '' " >
+				and NAME = #{item.NAME_Q} 
+			</if>
+			<if test="item.jurisdiction_manage_id_Q != null and item.jurisdiction_manage_id_Q != '' " >
+				and jurisdiction_manage_id = #{item.jurisdiction_manage_id_Q}
+			</if>
+			<if test="item.create_time_Q != null and item.create_time_Q != '' " >
+				and create_time = #{item.create_time_Q} 
+			</if>
+			<if test="item.update_time_Q != null and item.update_time_Q != '' " >
+				and update_time = #{item.update_time_Q} 
+			</if>
+			<if test="item.signature_Q != null and item.signature_Q != '' " >
+				and signature = #{item.signature_Q} 
+			</if>
+		</foreach>
+    </update>-->
+</mapper>

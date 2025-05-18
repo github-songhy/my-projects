@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.user.SysUserOldMapper">
+
+    <!-- 判断用户名和密码 -->
+    <select id="getLoginValidation" parameterType="pd" resultType="pd">
+        select
+        *
+        from sys_user u
+        where 1=1
+        <if test="USERNAME != null and PASSWORD != null">
+            and USERNAME = #{USERNAME} and PASSWORD = #{PASSWORD}
+        </if>
+        <if test="USER_ID != null and USER_ID != ''">
+            and USER_ID = #{USER_ID}
+        </if>
+    </select>
+
+
+    <select id="getSystemUserByColumn" parameterType="pd" resultType="pd">
+        select
+        *
+        from sys_user su
+        where 1 = 1
+        <if test="id != null">
+            and su.id = #{id}
+        </if>
+        <if test="USERNAME != null">
+            and su.USERNAME = #{USERNAME}
+        </if>
+        <if test="PASSWORD != null">
+            and su.PASSWORD = #{PASSWORD}
+        </if>
+        <if test="NAME != null">
+            and su.NAME = #{NAME}
+        </if>
+        <if test="luck">
+            for update
+        </if>
+    </select>
+
+    <insert id="addSystemUser" parameterType="pd">
+        insert into sys_user (
+        USERNAME,
+        PASSWORD,
+        NAME,
+        <if test="jurisdiction_manage_id != null and jurisdiction_manage_id != ''">
+            jurisdiction_manage_id,
+        </if>
+        <if test="signature != null and signature != ''">
+            signature,
+        </if>
+        <if test="student_number != null and student_number != ''">
+            student_number,
+        </if>
+        <if test="sex != null">
+            sex,
+        </if>
+        <if test="major != null">
+            major,
+        </if>
+        <if test="phone != null">
+            phone,
+        </if>
+        create_time
+
+        )
+        values (
+        #{USERNAME},
+        #{PASSWORD},
+        #{NAME},
+        <if test="jurisdiction_manage_id != null and jurisdiction_manage_id != ''">
+            #{jurisdiction_manage_id},
+        </if>
+        <if test="signature != null and signature != ''">
+            #{signature},
+        </if>
+        <if test="student_number != null and student_number != ''">
+            #{student_number},
+        </if>
+        <if test="sex != null">
+            #{sex},
+        </if>
+        <if test="major != null">
+            #{major},
+        </if>
+        <if test="phone != null">
+            #{phone},
+        </if>
+        now()
+        )
+    </insert>
+
+
+</mapper>

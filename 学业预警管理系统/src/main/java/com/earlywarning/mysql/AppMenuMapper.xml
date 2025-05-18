@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.AppMenuMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+su.name name,
+su.href href,
+su.create_time create_time,
+su.update_time update_time
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addAppMenu" parameterType="pd">
+        insert into app_menu (name,
+                              href,
+                              create_time,
+                              update_time)
+        values (#{name},
+                #{href},
+                now(),
+                #{update_time}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteAppMenuId" parameterType="pd">
+        DELETE
+        FROM app_menu
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateAppMenu" parameterType="pd">
+        UPDATE app_menu
+        <set>
+
+            <if test="name != null and name !=''">name = #{name},</if>
+            <if test="href != null and href !=''">href = #{href},</if>
+
+            update_time = now(),
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="queryAppMenuKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        FROM app_menu su
+        <!--向左关联查询-->
+        where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="name != null and name != '' ">and su.name = #{name}</if>
+        <if test="href != null and href != '' ">and su.href = #{href}</if>
+        <if test="create_time != null and create_time != '' ">and su.create_time = #{create_time}</if>
+        <if test="update_time != null and update_time != '' ">and su.update_time = #{update_time}</if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageAppMenuKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        FROM app_menu su
+        <!--向左关联查询-->
+        where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.name != null and pd.name !=''">and su.name = #{pd.name}</if>
+        <if test="pd.href != null and pd.href !=''">and su.href = #{pd.href}</if>
+        <if test="pd.create_time != null and pd.create_time !=''">and su.create_time = #{pd.create_time}</if>
+        <if test="pd.update_time != null and pd.update_time !=''">and su.update_time = #{pd.update_time}</if>
+    </select>
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.RoleManageMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+su.role_name role_name
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addRoleManage" parameterType="pd">
+        insert into role_manage (role_name)
+        values (#{role_name}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteRoleManageId" parameterType="pd">
+        DELETE
+        FROM role_manage
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateRoleManage" parameterType="pd">
+        UPDATE role_manage
+        <set>
+
+            <if test="role_name != null and role_name !=''">role_name = #{role_name},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="queryRoleManageKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        FROM role_manage su
+        <!--向左关联查询-->
+        where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="role_name != null and role_name != '' ">and su.role_name = #{role_name}</if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageRoleManageKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        FROM role_manage su
+        <!--向左关联查询-->
+        where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.role_name != null and pd.role_name !=''">and su.role_name = #{pd.role_name}</if>
+    </select>
+</mapper>

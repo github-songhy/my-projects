@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0"
+          name="viewport">
+    <title>课程管理</title>
+    <link href="favicon.ico" rel="shortcut icon">
+    <link href="../static/css/common.css" rel="stylesheet">
+    <link href="../static/element-ui/lib/theme-chalk/index.css" rel="stylesheet">
+    <script type="text/javascript">
+        var html = document.getElementsByTagName("html")[0];
+        var w = document.documentElement.clientWidth || document.body.clientWidth;
+        html.style.fontSize = w / 1366 + "px";
+    </script>
+    <script src="../static/js/vue.js"></script>
+    <script src="../static/element-ui/lib/index.js"></script>
+    <script src="../static/js/jquery-2.2.3.min.js"></script>
+    <!--富文本资源文件-->
+    <script charset="utf-8" src="../static/ueditor.config.js" type="text/javascript"></script>
+    <script charset="utf-8" src="../static/ueditor.all.min.js" type="text/javascript"></script>
+</head>
+<body style="background-color:#f1f7fe;">
+<div id="cus_IndexApp" v-cloak>
+    <div>
+        <el-button @click="add" icon="fa fa-user-plus" size="mini" type="success">&nbsp;新增</el-button>
+        <el-input class="top_divR" clearable placeholder="请输入课程名称" size="mini"
+                  v-model="soMoreUserIpt.name"></el-input>
+        <el-button @click="handleCurrentChange(1)" size="mini" style="background-color:#47a8f5;" type="warning">搜索
+        </el-button>
+    </div>
+    <div class="cusMTable">
+        <el-table :data="cusTableLstInit" :header-cell-style="{background:'#004d8c',color:'#FFFFFF','line-height':'50px',height:'50px'}"
+                  style="width: 100%;">
+            <el-table-column
+                    label="序号"
+                    prop="id">
+            </el-table-column>
+            <el-table-column
+                    label="课程名称"
+                    prop="name">
+            </el-table-column>
+            <el-table-column
+                    label="学分"
+                    prop="credit">
+            </el-table-column>
+
+            <el-table-column
+                    label="课程代码"
+                    prop="course_code">
+            </el-table-column>
+
+            <el-table-column
+                    label="计划学期"
+                    prop="planned_term">
+            </el-table-column>
+
+            <el-table-column
+                    label="开课学期"
+                    prop="commencement_term">
+            </el-table-column>
+
+            <el-table-column
+                    label="课程性质"
+                    prop="course_type">
+            </el-table-column>
+
+            <el-table-column
+                    label="创建时间"
+                    prop="create_time">
+            </el-table-column>
+            <el-table-column fixed="right" label="操作" width="200">
+                <template slot-scope="scope">
+                    <el-button @click="edit(scope.row)" size="small" type="primary">编辑</el-button>
+                    <el-button @click="del(scope.row)" size="small" type="danger">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div style="text-align:right;">
+            <el-pagination :current-page="pageInit.currentPage" :page-size="10" :total="pageInit.totalResult"
+                           @current-change="handleCurrentChange" layout="total, prev, pager, next, jumper">
+            </el-pagination>
+        </div>
+    </div>
+    <el-dialog :title="titleName" :visible.sync="addNewCustomer" top="5vh" width="60%">
+        <el-form :model="ruleForm" class="demo-ruleForm" label-width="100px" ref="ruleForm">
+
+            <el-form-item label="课程名称">
+                <el-input v-model="ruleForm.name"></el-input>
+            </el-form-item>
+            <el-form-item label="学分">
+                <el-input v-model="ruleForm.credit"></el-input>
+            </el-form-item>
+            <el-form-item label="课程代码">
+                <el-input v-model="ruleForm.course_code"></el-input>
+            </el-form-item>
+            <el-form-item label="计划学期">
+                <el-input v-model="ruleForm.planned_term"></el-input>
+            </el-form-item>
+            <el-form-item label="开课学期">
+                <el-input v-model="ruleForm.commencement_term"></el-input>
+            </el-form-item>
+            <el-form-item label="课程性质">
+                <el-input v-model="ruleForm.course_type"></el-input>
+            </el-form-item>
+
+            <el-form-item label="课程简介">
+                <el-input type="textarea" v-model="ruleForm.content"></el-input>
+            </el-form-item>
+
+            <el-form-item>
+                <el-button @click="submitForm" style="margin-left:35%" type="primary">立即保存</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+</div>
+</body>
+<script th:inline="javascript">
+    var ue = null;
+    var basePath = "/" + window.location.pathname.split("/")[1];
+    let app = window.parent.App;
+    new Vue({
+        el: "#cus_IndexApp",
+        data() {
+            return {
+                pageInit: {
+                    currentPage: 1,
+                },
+                cusTableLstInit: [],
+                soMoreUserIpt: {},
+                addNewCustomer: false,
+                ruleForm: {},
+                titleName: "新增",
+                classOptions: [],
+                userObj: [],
+                tenantList: [],
+                uploadUrl: basePath,
+            }
+        },
+        mounted() {
+            this.userObj = JSON.parse(localStorage.getItem("userInfo"));
+            ;
+            this.handleCurrentChange(1);
+        },
+        methods: {
+            windowOpen(url) {
+                window.open(url);
+            },
+            add() {
+                this.titleName = "新增";
+                this.ruleForm = {};
+                this.addNewCustomer = true;
+            },
+            edit(row) {
+                this.titleName = "编辑";
+                this.ruleForm = row;
+                this.addNewCustomer = true;
+            },
+            submitForm() {
+                let that = this;
+                if (this.titleName == "新增") {
+                    $.ajax({
+                        type: "GET",
+                        url: basePath + "/course_manage/addCourseManageNo",
+                        data: that.ruleForm,
+                        success: function (res) {
+                            console.log(res);
+                            if (res.status == 0) {
+                                that.addNewCustomer = false;
+                                that.handleCurrentChange(1);
+                            }
+                        }
+                    })
+                } else {
+                    $.ajax({
+                        type: "GET",
+                        url: basePath + "/course_manage/updateCourseManage",
+                        data: that.ruleForm,
+                        success: function (res) {
+                            if (res.status == 0) {
+                                that.addNewCustomer = false;
+                                that.handleCurrentChange(1);
+                            }
+                        }
+                    })
+                }
+            },
+            changeSearchFlag() {
+                this.topSearchFlag = false;
+            },
+            handleCurrentChange(val) {
+                this.loading = true;
+                this.soMoreUserIpt.currentPage = val;
+                let that = this;
+                $.ajax({
+                    type: "GET",
+                    url: `${basePath}/course_manage/queryPageCourseManageKeyList`,
+                    data: that.soMoreUserIpt,
+                    success: function (data) {
+                        that.cusTableLstInit = data.rows;
+                        that.pageInit.totalResult = data.total;
+                        that.pageInit.currentPage = val;
+                        that.loading = false;
+                    }
+                })
+            },
+            del(row) {
+                var that = this;
+                that.$confirm("确认删除该信息!", "提示", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning"
+                }).then(() => {
+                    $.ajax({
+                        type: "GET",
+                        url: `${basePath}/course_manage/deleteCourseManage`,
+                        data: {id: row.id},
+                        success: function (data) {
+                            if (data.status == 0) {
+                                that.$message({
+                                    type: "success",
+                                    message: "删除成功"
+                                });
+                                that.handleCurrentChange(1);
+                            }
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: "info",
+                        message: "已取消删除"
+                    });
+                });
+            },
+        }
+    })
+</script>
+</html>
+
+

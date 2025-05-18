@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.SessionManageMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+su.name name,
+su.order_number order_number
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addSessionManage" parameterType="pd">
+        insert into session_manage (name,
+                                    order_number)
+        values (#{name},
+                #{order_number}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteSessionManageId" parameterType="pd">
+        DELETE
+        FROM session_manage
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateSessionManage" parameterType="pd">
+        UPDATE session_manage
+        <set>
+
+            <if test="name != null and name !=''">name = #{name},</if>
+            <if test="order_number != null and order_number !=''">order_number = #{order_number},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="querySessionManageKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        FROM session_manage su
+        <!--向左关联查询-->
+        where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="name != null and name != '' ">and su.name = #{name}</if>
+        <if test="order_number != null and order_number != '' ">and su.order_number = #{order_number}</if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageSessionManageKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        FROM session_manage su
+        <!--向左关联查询-->
+        where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.name != null and pd.name !=''">and su.name = #{pd.name}</if>
+        <if test="pd.order_number != null and pd.order_number !=''">and su.order_number = #{pd.order_number}</if>
+    </select>
+</mapper>

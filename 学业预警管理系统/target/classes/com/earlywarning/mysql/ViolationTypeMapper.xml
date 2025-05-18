@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.ViolationTypeMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+su.name name
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addViolationType" parameterType="pd">
+        insert into violation_type (name)
+        values (#{name}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteViolationTypeId" parameterType="pd">
+        DELETE
+        FROM violation_type
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateViolationType" parameterType="pd">
+        UPDATE violation_type
+        <set>
+
+            <if test="name != null and name !=''">name = #{name},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="queryViolationTypeKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        FROM violation_type su
+        <!--向左关联查询-->
+        where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="name != null and name != '' ">and su.name = #{name}</if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageViolationTypeKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        FROM violation_type su
+        <!--向左关联查询-->
+        where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.name != null and pd.name !=''">and su.name = #{pd.name}</if>
+    </select>
+    <select id="queryViolationPie" resultType="com.earlywarning.common.Chars">
+        select a.name, CONVERT(count(b.violation_type_id), CHAR) as value
+        from violation_type a LEFT JOIN stu_violation b
+        on a.id = b.violation_type_id
+        GROUP BY a.id
+    </select>
+</mapper>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.AppUserMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+            su.username username,
+            su.password password,
+            su.nickname nickname,
+            su.sex sex,
+            su.phone phone,
+            su.CET_4 CET_4,
+            su.class_manage_id class_manage_id,
+            su.special_subject_id special_subject_id,
+            su.early_warning early_warning,
+            su.id_card,
+            su.dormitory_number,
+            su.credit
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addAppUser" parameterType="pd">
+        insert into app_user (username,
+                              password,
+                              nickname,
+                              sex,
+                              phone,
+                              CET_4,
+                              class_manage_id,
+                              special_subject_id,
+                              early_warning,
+                              id_card,
+                              dormitory_number,
+                              credit)
+        values (#{username},
+                #{password},
+                #{nickname},
+                #{sex},
+                #{phone},
+                #{CET_4},
+                #{class_manage_id},
+                #{special_subject_id},
+                #{early_warning},
+                #{id_card},
+                #{dormitory_number},
+                #{credit}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteAppUserId" parameterType="pd">
+        DELETE
+        FROM app_user
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateAppUser" parameterType="pd">
+        UPDATE app_user
+        <set>
+            <if test="username != null and username !=''">username = #{username},</if>
+            <if test="password != null and password !=''">password = #{password},</if>
+            <if test="nickname != null and nickname !=''">nickname = #{nickname},</if>
+            <if test="sex != null and sex !=''">sex = #{sex},</if>
+            <if test="phone != null and phone !=''">phone = #{phone},</if>
+            <if test="CET_4 != null and CET_4 !=''">CET_4 = #{CET_4},</if>
+            <if test="class_manage_id != null and class_manage_id !=''">class_manage_id = #{class_manage_id},</if>
+            <if test="special_subject_id != null and special_subject_id !=''">special_subject_id =
+                #{special_subject_id},
+            </if>
+            <if test="id_card != null and id_card !=''">id_card = #{id_card},</if>
+            <if test="dormitory_number != null and dormitory_number !=''">dormitory_number = #{dormitory_number},</if>
+            <if test="credit != null">credit = #{credit},</if>
+
+
+            <if test="early_warning != null and early_warning !=''">early_warning = #{early_warning},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="queryAppUserKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        ,class_manage.id as class_manage_id1
+        ,class_manage.name as class_manage_name1
+        ,class_manage.is_graduate as class_manage_is_graduate1
+        ,class_manage.special_subject_id as class_manage_special_subject_id1
+        ,special_subject.id as special_subject_id1
+        ,special_subject.name as special_subject_name1
+        FROM app_user su
+        <!--向左关联查询-->
+        left join class_manage class_manage on class_manage.id=su.class_manage_id
+        left join special_subject special_subject on special_subject.id=su.special_subject_id
+        where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="username != null and username != '' ">and su.username = #{username}</if>
+        <if test="password != null and password != '' ">and su.password = #{password}</if>
+        <if test="nickname != null and nickname != '' ">and su.nickname = #{nickname}</if>
+        <if test="sex != null and sex != '' ">and su.sex = #{sex}</if>
+        <if test="phone != null and phone != '' ">and su.phone = #{phone}</if>
+        <if test="CET_4 != null and CET_4 != '' ">and su.CET_4 = #{CET_4}</if>
+        <if test="class_manage_id != null and class_manage_id != '' ">and su.class_manage_id = #{class_manage_id}</if>
+        <if test="special_subject_id != null and special_subject_id != '' ">and su.special_subject_id =
+            #{special_subject_id}
+        </if>
+        <if test="early_warning != null and early_warning != '' ">and su.early_warning = #{early_warning}</if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageAppUserKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        ,class_manage.id as class_manage_id1
+        ,class_manage.name as class_manage_name1
+        ,class_manage.is_graduate as class_manage_is_graduate1
+        ,class_manage.special_subject_id as class_manage_special_subject_id1
+        ,special_subject.id as special_subject_id1
+        ,special_subject.name as special_subject_name1
+        FROM app_user su
+        <!--向左关联查询-->
+        left join class_manage class_manage on class_manage.id=su.class_manage_id
+        left join special_subject special_subject on special_subject.id=su.special_subject_id
+        where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.username != null and pd.username !=''">and su.username = #{pd.username}</if>
+        <if test="pd.password != null and pd.password !=''">and su.password = #{pd.password}</if>
+        <if test="pd.nickname != null and pd.nickname !=''">and su.nickname = #{pd.nickname}</if>
+        <if test="pd.sex != null and pd.sex !=''">and su.sex = #{pd.sex}</if>
+        <if test="pd.phone != null and pd.phone !=''">and su.phone = #{pd.phone}</if>
+        <if test="pd.CET_4 != null and pd.CET_4 !=''">and su.CET_4 = #{pd.CET_4}</if>
+        <if test="pd.class_manage_id != null and pd.class_manage_id !=''">and su.class_manage_id =
+            #{pd.class_manage_id}
+        </if>
+        <if test="pd.special_subject_id != null and pd.special_subject_id !=''">and su.special_subject_id =
+            #{pd.special_subject_id}
+        </if>
+        <if test="pd.early_warning != null and pd.early_warning !=''">and su.early_warning = #{pd.early_warning}</if>
+    </select>
+</mapper>

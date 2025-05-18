@@ -1,0 +1,82 @@
+
+body {
+    y-overflow: auto;
+}
+
+.cusMTable {
+    margin-top: 10px;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.el-table td {
+    padding: 4px 0 !important;
+}
+
+.el-message-box {
+    margin-top: -300px;
+}
+
+.top_divR {
+    width: 150px !important;
+    margin-right: 20px;
+}
+
+.el-table .cell {
+    text-align: center !important;
+}
+
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px !important;
+    text-align: center;
+}
+
+.avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+}
+
+.flexCon {
+    display: flex;
+}
+
+.flexCon .el-form-item {
+    width: 50%;
+}
+
+.conYj {
+    font-size: 12px;
+    color: #333333;
+    padding: 5px 20px;
+    line-height: 24px;
+}
+
+.conYj label {
+    font-weight: 600;
+    color: #000000;
+}

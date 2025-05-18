@@ -1,0 +1,304 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    height: 100%;
+}
+
+#indexApp {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100vh;
+}
+
+header {
+    border-bottom: 1px solid #ccc;
+    background-color: rgba(0, 0, 0, .7);
+}
+
+.header {
+    width: 1200px;
+    padding: 10px 50px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header img {
+    width: 50px;
+    cursor: pointer;
+}
+
+.header div label {
+    color: #666666;
+    font-size: 12px;
+    margin: 0 10px;
+}
+
+.header div span {
+    font-size: 14px;
+    cursor: pointer;
+    color: #333333;
+}
+
+.carouselImg {
+    width: 100%;
+    height: auto;
+}
+
+.contaiter {
+    width: 1000px;
+    min-height: 640px;
+    margin: 50px auto;
+}
+
+.my_img {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.my_img img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+}
+
+.con_search {
+    width: 800px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+.con_div {
+    width: 1040px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.con_div_item {
+    width: 230px;
+    height: 340px;
+    cursor: pointer;
+    border: 1px solid #eeee;
+    background-color: #ffffff;
+    margin-right: 25px;
+    margin-bottom: 25px;
+}
+
+.con_bottom:hover span {
+    color: orangered;
+}
+
+.con_div img {
+    height: 230px;
+}
+
+.con_bottom {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    line-height: 20px;
+    padding: 10px 15px;
+    height: 45px;
+}
+
+.con_div span {
+    color: #333;
+    font-size: 14px;
+}
+
+.con_div label {
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 6px;
+    background-color: orange;
+    color: #ffffff;
+    font-size: 12px;
+}
+
+.con_price {
+    font-size: 18px;
+    font-weight: 600;
+    color: red;
+    text-align: right;
+    padding: 0 15px 15px 15px;
+}
+
+.nomore {
+    text-align: center;
+    padding: 20px;
+    color: #999999;
+    font-size: 12px;
+}
+
+.classCon {
+    display: flex;
+    width: 1000px;
+    margin: 15px auto;
+    padding: 15px 20px;
+    padding-right: 0;
+    background-color: #ffffff;
+}
+
+.classCon div:first-child {
+    width: 60px;
+    font-size: 14px;
+    color: #333333;
+}
+
+.classCon div:last-child {
+    flex-grow: 1;
+}
+
+.classCon div span {
+    font-size: 14px;
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.curSpan {
+    background-color: #fd8c12;
+    color: #ffffff;
+}
+
+footer {
+    padding: 10px 20px;
+    background: #f6d04d;
+    color: #ffffff;
+    text-align: center
+}
+
+footer div {
+    margin: 10px auto;
+}
+
+.topCpm {
+    width: 560px;
+    height: 200px;
+    background: #fdc4b6;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 200px;
+    color: #ffffff;
+    margin: 40px 20px;
+    margin-top: 0;
+}
+
+#indexLogin {
+    width: 100vw;
+    height: 100vh;
+    background: url("../img/bgimg.jpg") no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color: #CCCCCC;
+}
+
+.loginCon {
+    padding: 200px 0;
+}
+
+.login {
+    width: 375px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 40px 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+}
+
+.login_left {
+    width: 300px;
+}
+
+.login_left h4 {
+    text-align: center;
+    padding-left: 65px;
+    color: #333333;
+}
+
+.login_right {
+    width: 200px;
+    height: 300px;
+    background: rgba(255, 173, 96, .6);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.loginCon_bottom {
+    text-align: right;
+    padding-bottom: 10px;
+}
+
+.loginCon_bottom div {
+}
+
+.loginCon_bottom div span {
+    font-size: 12px;
+    color: #666666;
+    margin-left: 6px;
+    cursor: pointer;
+}
+
+.loginCon_bottom div span:hover {
+    text-decoration: underline;
+}
+
+.topItemList {
+    flex-grow: 1;
+    margin-left: 15px;
+    color: orangered;
+    font-size: 20px;
+    font-weight: 600;
+
+}
+
+.topItemList span {
+    padding: 0px 20px;
+    height: 50px;
+    line-height: 50px;
+    color: #ff9d00;
+    border-right: 2px solid #fff;
+}
+
+.topItemList span:first-child {
+    border-left: 2px solid #fff;
+}
+
+.selCur {
+    display: inline-block;
+    background-color: #ea7070;
+    color: #ffffff !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

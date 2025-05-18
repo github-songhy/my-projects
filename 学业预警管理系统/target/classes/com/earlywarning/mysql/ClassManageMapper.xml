@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.ClassManageMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+su.name name,
+su.is_graduate is_graduate,
+su.special_subject_id special_subject_id
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addClassManage" parameterType="pd">
+        insert into class_manage (name,
+                                  is_graduate,
+                                  special_subject_id)
+        values (#{name},
+                #{is_graduate},
+                #{special_subject_id}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteClassManageId" parameterType="pd">
+        DELETE
+        FROM class_manage
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateClassManage" parameterType="pd">
+        UPDATE class_manage
+        <set>
+
+            <if test="name != null and name !=''">name = #{name},</if>
+            <if test="is_graduate != null and is_graduate !=''">is_graduate = #{is_graduate},</if>
+            <if test="special_subject_id != null and special_subject_id !=''">special_subject_id =
+                #{special_subject_id},
+            </if>
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="queryClassManageKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        ,special_subject.id as special_subject_id1
+        ,special_subject.name as special_subject_name1
+        FROM class_manage su
+        <!--向左关联查询-->
+        left join special_subject special_subject on special_subject.id=su.special_subject_id
+        where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="name != null and name != '' ">and su.name = #{name}</if>
+        <if test="is_graduate != null and is_graduate != '' ">and su.is_graduate = #{is_graduate}</if>
+        <if test="special_subject_id != null and special_subject_id != '' ">and su.special_subject_id =
+            #{special_subject_id}
+        </if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageClassManageKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        ,special_subject.id as special_subject_id1
+        ,special_subject.name as special_subject_name1
+        FROM class_manage su
+        <!--向左关联查询-->
+        left join special_subject special_subject on special_subject.id=su.special_subject_id
+        where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.name != null and pd.name !=''">and su.name = #{pd.name}</if>
+        <if test="pd.is_graduate != null and pd.is_graduate !=''">and su.is_graduate = #{pd.is_graduate}</if>
+        <if test="pd.special_subject_id != null and pd.special_subject_id !=''">and su.special_subject_id =
+            #{pd.special_subject_id}
+        </if>
+    </select>
+</mapper>

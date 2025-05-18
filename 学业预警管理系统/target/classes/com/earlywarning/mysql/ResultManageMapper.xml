@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.ResultManageMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+su.session_manage_id session_manage_id,
+su.course_manage_id course_manage_id,
+su.score score,
+su.grade_point grade_point,
+su.a_type a_type,
+su.app_user_id app_user_id,
+su.class_manage_id class_manage_id,
+su.special_subject_id special_subject_id,
+su.create_time create_time,
+su.credit credit
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addResultManage" parameterType="pd">
+        insert into result_manage (session_manage_id,
+                                   course_manage_id,
+                                   score,
+                                   grade_point,
+                                   a_type,
+                                   app_user_id,
+                                   class_manage_id,
+                                   special_subject_id,
+                                   create_time,
+                                   credit)
+        values (#{session_manage_id},
+                #{course_manage_id},
+                #{score},
+                #{grade_point},
+                #{a_type},
+                #{app_user_id},
+                #{class_manage_id},
+                #{special_subject_id},
+                now(),
+                #{credit}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteResultManageId" parameterType="pd">
+        DELETE
+        FROM result_manage
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateResultManage" parameterType="pd">
+        UPDATE result_manage
+        <set>
+
+            <if test="session_manage_id != null and session_manage_id !=''">session_manage_id = #{session_manage_id},
+            </if>
+            <if test="course_manage_id != null and course_manage_id !=''">course_manage_id = #{course_manage_id},</if>
+            <if test="score != null and score !=''">score = #{score},</if>
+            <if test="grade_point != null and grade_point !=''">grade_point = #{grade_point},</if>
+            <if test="a_type != null and a_type !=''">a_type = #{a_type},</if>
+            <if test="app_user_id != null and app_user_id !=''">app_user_id = #{app_user_id},</if>
+            <if test="class_manage_id != null and class_manage_id !=''">class_manage_id = #{class_manage_id},</if>
+            <if test="special_subject_id != null and special_subject_id !=''">special_subject_id =
+                #{special_subject_id},
+            </if>
+            <if test="credit != null and credit !=''">credit =
+                #{credit},
+            </if>
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="queryResultManageKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        ,session_manage.id as session_manage_id1
+        ,session_manage.name as session_manage_name1
+        ,session_manage.order_number as session_manage_order_number1
+        ,course_manage.id as course_manage_id1
+        ,course_manage.name as course_manage_name1
+        ,course_manage.credit as course_manage_credit1
+        ,course_manage.grade_point as course_manage_grade_point1
+        ,course_manage.content as course_manage_content1
+        ,course_manage.create_time as course_manage_create_time1
+        ,app_user.id as app_user_id1
+        ,app_user.username as app_user_username1
+        ,app_user.password as app_user_password1
+        ,app_user.nickname as app_user_nickname1
+        ,app_user.sex as app_user_sex1
+        ,app_user.phone as app_user_phone1
+        ,app_user.CET_4 as app_user_CET_41
+        ,app_user.class_manage_id as app_user_class_manage_id1
+        ,app_user.special_subject_id as app_user_special_subject_id1
+        ,app_user.early_warning as app_user_early_warning1
+        ,class_manage.id as class_manage_id1
+        ,class_manage.name as class_manage_name1
+        ,class_manage.is_graduate as class_manage_is_graduate1
+        ,class_manage.special_subject_id as class_manage_special_subject_id1
+        ,special_subject.id as special_subject_id1
+        ,special_subject.name as special_subject_name1
+        FROM result_manage su
+        <!--向左关联查询-->
+        left join session_manage session_manage on session_manage.id=su.session_manage_id
+        left join course_manage course_manage on course_manage.id=su.course_manage_id
+        left join app_user app_user on app_user.id=su.app_user_id
+        left join class_manage class_manage on class_manage.id=su.class_manage_id
+        left join special_subject special_subject on special_subject.id=su.special_subject_id
+        where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="session_manage_id != null and session_manage_id != '' ">and su.session_manage_id =
+            #{session_manage_id}
+        </if>
+        <if test="course_manage_id != null and course_manage_id != '' ">and su.course_manage_id = #{course_manage_id}
+        </if>
+        <if test="score != null and score != '' ">and su.score = #{score}</if>
+        <if test="grade_point != null and grade_point != '' ">and su.grade_point = #{grade_point}</if>
+        <if test="a_type != null and a_type != '' ">and su.a_type = #{a_type}</if>
+        <if test="app_user_id != null and app_user_id != '' ">and su.app_user_id = #{app_user_id}</if>
+        <if test="class_manage_id != null and class_manage_id != '' ">and su.class_manage_id = #{class_manage_id}</if>
+        <if test="special_subject_id != null and special_subject_id != '' ">and su.special_subject_id =
+            #{special_subject_id}
+        </if>
+        <if test="create_time != null and create_time != '' ">and su.create_time = #{create_time}</if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageResultManageKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        ,session_manage.id as session_manage_id1
+        ,session_manage.name as session_manage_name1
+        ,session_manage.order_number as session_manage_order_number1
+        ,course_manage.id as course_manage_id1
+        ,course_manage.name as course_manage_name1
+        ,course_manage.credit as course_manage_credit1
+        ,course_manage.grade_point as course_manage_grade_point1
+        ,course_manage.content as course_manage_content1
+        ,course_manage.create_time as course_manage_create_time1
+        ,app_user.id as app_user_id1
+        ,app_user.username as app_user_username1
+        ,app_user.password as app_user_password1
+        ,app_user.nickname as app_user_nickname1
+        ,app_user.sex as app_user_sex1
+        ,app_user.phone as app_user_phone1
+        ,app_user.CET_4 as app_user_CET_41
+        ,app_user.class_manage_id as app_user_class_manage_id1
+        ,app_user.special_subject_id as app_user_special_subject_id1
+        ,app_user.early_warning as app_user_early_warning1
+        ,class_manage.id as class_manage_id1
+        ,class_manage.name as class_manage_name1
+        ,class_manage.is_graduate as class_manage_is_graduate1
+        ,class_manage.special_subject_id as class_manage_special_subject_id1
+        ,special_subject.id as special_subject_id1
+        ,special_subject.name as special_subject_name1
+        FROM result_manage su
+        <!--向左关联查询-->
+        left join session_manage session_manage on session_manage.id=su.session_manage_id
+        left join course_manage course_manage on course_manage.id=su.course_manage_id
+        left join app_user app_user on app_user.id=su.app_user_id
+        left join class_manage class_manage on class_manage.id=su.class_manage_id
+        left join special_subject special_subject on special_subject.id=su.special_subject_id
+        where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.session_manage_id != null and pd.session_manage_id !=''">and su.session_manage_id =
+            #{pd.session_manage_id}
+        </if>
+        <if test="pd.course_manage_id != null and pd.course_manage_id !=''">and su.course_manage_id =
+            #{pd.course_manage_id}
+        </if>
+        <if test="pd.score != null and pd.score !=''">and su.score = #{pd.score}</if>
+        <if test="pd.grade_point != null and pd.grade_point !=''">and su.grade_point = #{pd.grade_point}</if>
+        <if test="pd.a_type != null and pd.a_type !=''">and su.a_type = #{pd.a_type}</if>
+        <if test="pd.app_user_id != null and pd.app_user_id !=''">and su.app_user_id = #{pd.app_user_id}</if>
+        <if test="pd.class_manage_id != null and pd.class_manage_id !=''">and su.class_manage_id =
+            #{pd.class_manage_id}
+        </if>
+        <if test="pd.special_subject_id != null and pd.special_subject_id !=''">and su.special_subject_id =
+            #{pd.special_subject_id}
+        </if>
+        <if test="pd.create_time != null and pd.create_time !=''">and su.create_time = #{pd.create_time}</if>
+        order by su.create_time desc
+    </select>
+    <select id="queryResultManageBySessionManageId" resultType="com.earlywarning.entity.system.PageData"
+            parameterType="java.lang.String">
+        SELECT
+        a.early_warning
+        FROM
+        app_user a
+        LEFT JOIN result_manage b ON a.id = b.app_user_id where 1=1
+        <if test="session_manage_id != null and session_manage_id !=''">and b.session_manage_id = #{session_manage_id}
+        </if>
+        GROUP BY
+        a.id
+    </select>
+
+</mapper>

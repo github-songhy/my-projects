@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.earlywarning.mapper.JurisdictionManageMapper">
+    <sql id="Base_Column_List">
+        su
+        .
+        id
+        id,
+su.role_manage_id role_manage_id,
+su.app_menu_tree app_menu_tree
+    </sql>
+    <!--在数据不存在的情况下进行添加-->
+    <insert id="addJurisdictionManage" parameterType="pd">
+        insert into jurisdiction_manage (role_manage_id,
+                                         app_menu_tree)
+        values (#{role_manage_id},
+                #{app_menu_tree}) </insert>
+    <!--根据id删除数据-->
+    <delete id="deleteJurisdictionManageId" parameterType="pd">
+        DELETE
+        FROM jurisdiction_manage
+        WHERE id = #{id};
+    </delete>
+    <!--根据id更新数据-->
+    <update id="updateJurisdictionManage" parameterType="pd">
+        UPDATE jurisdiction_manage
+        <set>
+
+            <if test="role_manage_id != null and role_manage_id !=''">role_manage_id = #{role_manage_id},</if>
+            <if test="app_menu_tree != null and app_menu_tree !=''">app_menu_tree = #{app_menu_tree},</if>
+        </set>
+        WHERE id = #{id};
+    </update>
+    <!--获取数据 不分页-->
+    <select id="queryJurisdictionManageKey" parameterType="pd" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        ,role_manage.id as role_manage_id1
+        ,role_manage.role_name as role_manage_role_name1
+        FROM jurisdiction_manage su
+        <!--向左关联查询-->
+        left join role_manage role_manage on role_manage.id=su.role_manage_id
+        where 1 = 1
+        <if test="id != null and id != '' ">and su.id = #{id}</if>
+        <if test="role_manage_id != null and role_manage_id != '' ">and su.role_manage_id = #{role_manage_id}</if>
+        <if test="app_menu_tree != null and app_menu_tree != '' ">and su.app_menu_tree = #{app_menu_tree}</if>
+    </select>
+    <!--获取用户列表数据 分页-->
+    <select id="queryPageJurisdictionManageKeyList" parameterType="page" resultType="pd" useCache="false">
+        SELECT
+        <include refid="Base_Column_List"/>
+        <!--向左关联查询返回对应字段-->
+        ,role_manage.id as role_manage_id1
+        ,role_manage.role_name as role_manage_role_name1
+        FROM jurisdiction_manage su
+        <!--向左关联查询-->
+        left join role_manage role_manage on role_manage.id=su.role_manage_id
+        where 1 = 1
+        <if test="pd.id != null and pd.id !=''">and su.id = #{pd.id}</if>
+        <if test="pd.role_manage_id != null and pd.role_manage_id !=''">and su.role_manage_id = #{pd.role_manage_id}
+        </if>
+        <if test="pd.app_menu_tree != null and pd.app_menu_tree !=''">and su.app_menu_tree = #{pd.app_menu_tree}</if>
+    </select>
+</mapper>
