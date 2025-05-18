@@ -1,0 +1,36 @@
+1.数仓是什么：
+	提供数据的 存储，管理和分析的仓库
+2.为什么不能用mysql，oracle之类的
+	数仓提供历史数据的存储，便于基于历史的数据统计分析，且存储的数据量庞大
+3.数仓的建模
+	一般使用维度模型建模，而不是数据库常用的ER模型
+	维度模型便于统计分析，ER模型可以降低数据冗余
+4.维度模型建立
+	ODS层 操作数据层 --> 存放原始数据
+	DIM层 维度层 --> 存放维度相关数据
+	DWD层 数据仓库明细层 --> 存放清洗转化后的数据
+	DWS层 数据仓库汇总层 --> 存放多个需求涉及到的多个中间计算结果，减少重复计算，提高复用性
+	ADS层 数据应用层 --> 存放各项指标的统计结果
+5.每日数据加载
+	开启组件
+		zk start
+		hdp start
+		kfk start
+	模拟数据
+		/root/tms-mock/update_mockdata /root/tms-mock/application.yml 2024-10-
+		java -jar /root/tms-mock/tms-mock-modify-2023-01-06.jar
+	全量采集
+		/root/tms/mysql_to_hdfs_full.sh all 2024-10- （DataX）
+	增量采集
+		/root/tms/flkcdc.sh start /tms_cdc/ck/ods_app/170874ebc8c9269a27cffbd9e0574bd9/chk-1761 2024-10- （FLinkCDC）
+		/root/tms/kafka_to_hdfs_inc.sh start
+	hdfs->ods （Flume）
+		/root/tms/hdfs_to_ods.sh all 2024-10-
+	ods->dim
+		/root/tms/ods_to_dim.sh all 2024-10-
+	ods->dwd
+		
+		
+		
+		
+		
