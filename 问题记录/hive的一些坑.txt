@@ -1,0 +1,22 @@
+metastore服务不绑定端口只监听端口9083,如果需要其他组件访问hive的metastore,需要在hive-site.xml中配置
+	<property>
+    	<name>hive.metastore.uris</name>
+    	<value>thrift://node1:9083</value>
+    </property
+让他们通过这个端口来访问
+spark-sql的相关代码应该里面直接就写了9083端口，会自动读取HIVE_HOME/conf/hive-site.xml文件
+这个文件中配了这个9083端口就能自动连上
+
+---------------------------------
+spark on hive（即用spark访问hive的元数据）要用spark-x.x.x-bin-hadoop
+	这个里面有hadoop和hive的相关依赖，配置好相关信息可以直接使用
+hive on spark（用spark作为hive的执行引擎）一般为了防止依赖冲突用spark-x.x.x-bin-without-hadoop
+	这个里面没有hadoop和hive的相关依赖，例如直接spark-sql是会报找不到类的，因为spark-sql运行要用到hive
+	
+---------------------------------
+hive中hiveserver2用不到就不要配，如
+	<property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
+开启后某些执行任务会去连接hiveserver2
